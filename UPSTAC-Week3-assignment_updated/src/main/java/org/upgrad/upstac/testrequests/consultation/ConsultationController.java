@@ -8,10 +8,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.upgrad.upstac.config.security.UserLoggedInService;
 import org.upgrad.upstac.exception.AppException;
+import org.upgrad.upstac.testrequests.RequestStatus;
 import org.upgrad.upstac.testrequests.TestRequest;
 import org.upgrad.upstac.testrequests.TestRequestQueryService;
 import org.upgrad.upstac.testrequests.TestRequestUpdateService;
 import org.upgrad.upstac.testrequests.flow.TestRequestFlowService;
+import org.upgrad.upstac.users.User;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;
@@ -63,7 +65,7 @@ public class ConsultationController {
 	      User doctor = userLoggedInService.getLoggedInUser();
 	   
 	      //Returning the list of tests assigned to the user(doctor)
-		  TestRequest testRequest = testRequestUpdateService.assignForConsultation(id,doctor)
+		  TestRequest testRequest = testRequestUpdateService.assignForConsultation(id,doctor);
 	      return testRequest;
     
         }catch (AppException e) {
@@ -81,9 +83,7 @@ public class ConsultationController {
 	      User doctor = userLoggedInService.getLoggedInUser();
 	   
 	      //Update & return the consultation request
-		  TestRequest testRequest = testRequestUpdateService.updateConsultation(id,testResult,doctor)
-	      return testRequest;
-     
+           return testRequestUpdateService.updateConsultation(id,testResult,doctor);
           
         } catch (ConstraintViolationException e) {
             throw asConstraintViolation(e);
