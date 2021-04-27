@@ -4,10 +4,8 @@ package org.upgrad.upstac.testrequests.consultation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.upgrad.upstac.config.security.UserLoggedInService;
 import org.upgrad.upstac.exception.AppException;
 import org.upgrad.upstac.testrequests.TestRequest;
@@ -27,20 +25,12 @@ import static org.upgrad.upstac.exception.UpgradResponseStatusException.asConstr
 public class ConsultationController {
 
     Logger log = LoggerFactory.getLogger(ConsultationController.class);
-
-
-
-
-    @Autowired
-    private TestRequestUpdateService testRequestUpdateService;
-
-    @Autowired
-    private TestRequestQueryService testRequestQueryService;
-
-
     @Autowired
     TestRequestFlowService  testRequestFlowService;
-
+    @Autowired
+    private TestRequestUpdateService testRequestUpdateService;
+    @Autowired
+    private TestRequestQueryService testRequestQueryService;
     @Autowired
     private UserLoggedInService userLoggedInService;
 

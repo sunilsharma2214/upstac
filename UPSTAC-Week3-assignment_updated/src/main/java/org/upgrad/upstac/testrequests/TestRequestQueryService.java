@@ -20,111 +20,73 @@ import java.util.stream.Collectors;
 @Validated
 public class TestRequestQueryService {
 
-    @Autowired
-    private TestRequestRepository testRequestRepository;
+  private static Logger logger = LoggerFactory.getLogger(TestRequestQueryService.class);
+  @Autowired private TestRequestRepository testRequestRepository;
+  @Autowired private LabResultRepository labResultRepository;
+  @Autowired private ConsultationRepository consultationRepository;
 
+  public List<TestRequest> findAll() {
 
-    @Autowired
-    private LabResultRepository labResultRepository;
+    return testRequestRepository.findAll();
+  }
 
+  public Optional<TestRequest> getTestRequestById(Long id) {
 
-    @Autowired
-    private ConsultationRepository consultationRepository;
+    return testRequestRepository.findById(id);
+  }
 
-    private static Logger logger = LoggerFactory.getLogger(TestRequestQueryService.class);
+  public List<TestRequest> findBy(RequestStatus requestStatus) {
+    return testRequestRepository.findByStatus(requestStatus);
+  }
 
+  public List<TestRequest> findByTester(User user) {
 
-    public List<TestRequest> findAll() {
+    return labResultRepository.findByTester(user).stream()
+        .map(LabResult::getRequest)
+        .collect(Collectors.toList());
+  }
 
-        return testRequestRepository.findAll();
-    }
+  public List<TestRequest> findByDoctor(User user) {
+    return consultationRepository.findByDoctor(user).stream()
+        .map(Consultation::getRequest)
+        .collect(Collectors.toList());
+  }
 
+  public Optional<TestRequest> findTestRequestForUserByID(User user, Long id) {
 
-    public Optional<TestRequest> getTestRequestById(Long id) {
+    logger.info("findTestRequestForUserByID" + user.getRoles().toString());
 
-        return testRequestRepository.findById(id);
-    }
+    if (user.doesRoleIsUser()) return findByUserAndID(user, id);
+    else if (user.doesRoleIsTester()) return findByTesterAndID(user, id);
+    else if (user.doesRoleIsDoctor()) return findByDoctorAndID(user, id);
+    else if (user.doesRoleIsAuthority()) return testRequestRepository.findByRequestId(id);
+    else throw new AppException("Invalid Role");
+  }
 
+  public Optional<TestRequest> findByDoctorAndID(User doctor, Long id) {
 
+    return testRequestRepository
+        .findByRequestId(id)
+        .filter(
+            testRequest ->
+                consultationRepository.findByDoctorAndRequest(doctor, testRequest).isPresent());
+  }
 
+  public Optional<TestRequest> findByTesterAndID(User tester, Long id) {
 
-    public List<TestRequest> findBy(RequestStatus requestStatus) {
-        return testRequestRepository.findByStatus(requestStatus);
+    return testRequestRepository
+        .findByRequestId(id)
+        .filter(
+            testRequest ->
+                labResultRepository.findByTesterAndRequest(tester, testRequest).isPresent());
+  }
 
-    }
+  public Optional<TestRequest> findByUserAndID(User user, Long id) {
 
+    return testRequestRepository.findByCreatedByAndRequestId(user, id);
+  }
 
-
-    public List<TestRequest> findByTester(User user) {
-
-        return  labResultRepository.findByTester(user)
-                .stream()
-                .map(LabResult::getRequest)
-                .collect(Collectors.toList());
-
-    }
-
-    public List<TestRequest> findByDoctor(User user) {
-        return  consultationRepository.findByDoctor(user)
-                .stream()
-                .map(Consultation::getRequest)
-                .collect(Collectors.toList());
-    }
-
-
-    public Optional<TestRequest> findTestRequestForUserByID(User user,Long id) {
-
-
-        logger.info("findTestRequestForUserByID" + user.getRoles().toString());
-
-        if(user.doesRoleIsUser())
-            return  findByUserAndID(user,id);
-        else if(user.doesRoleIsTester())
-            return findByTesterAndID(user,id);
-        else if(user.doesRoleIsDoctor())
-            return findByDoctorAndID(user,id);
-        else if(user.doesRoleIsAuthority())
-            return testRequestRepository.findByRequestId(id);
-        else
-            throw new AppException("Invalid Role");
-
-    }
-
-
-
-    public Optional<TestRequest> findByDoctorAndID(User doctor,Long id) {
-
-
-        return  testRequestRepository.findByRequestId(id)
-                .filter(testRequest -> consultationRepository.findByDoctorAndRequest(doctor,testRequest).isPresent());
-
-    }
-    public Optional<TestRequest> findByTesterAndID(User tester,Long id) {
-
-
-
-
-        return  testRequestRepository.findByRequestId(id)
-                .filter(testRequest -> labResultRepository.findByTesterAndRequest(tester,testRequest).isPresent());
-
-
-
-
-
-
-
-    }
-
-    public Optional<TestRequest> findByUserAndID(User user,Long id) {
-
-        return  testRequestRepository.findByCreatedByAndRequestId(user,id);
-
-    }
-
-    public List<TestRequest> findByUser(User user) {
-        return  testRequestRepository.findByCreatedBy(user);
-
-
-    }
-
+  public List<TestRequest> findByUser(User user) {
+    return testRequestRepository.findByCreatedBy(user);
+  }
 }
