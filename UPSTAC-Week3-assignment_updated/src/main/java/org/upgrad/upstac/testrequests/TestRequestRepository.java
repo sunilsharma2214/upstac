@@ -6,25 +6,30 @@ import org.upgrad.upstac.users.User;
 import java.util.List;
 import java.util.Optional;
 
-public interface TestRequestRepository extends JpaRepository<TestRequest, Long> {
 
-  Optional<TestRequest> findByRequestId(Long id);
+public interface TestRequestRepository extends JpaRepository<TestRequest,Long> {
 
-  List<TestRequest> findByCreatedBy(User user);
 
-  Optional<TestRequest> findByRequestIdAndStatus(Long id, RequestStatus status);
+	Optional<TestRequest> findByRequestId(Long id);
 
-  Optional<TestRequest> findByCreatedByAndRequestId(User user, Long id);
+	List<TestRequest> findByCreatedBy(User user);
 
-  List<TestRequest> findByEmail(String email);
+	Optional<TestRequest> findByRequestIdAndStatus(Long id,RequestStatus status);
+	Optional<TestRequest> findByCreatedByAndRequestId(User user,Long id);
+	List<TestRequest> findByEmail(String email);
+	List<TestRequest> findByEmailOrPhoneNumber(String email,String phoneNumber);
 
-  List<TestRequest> findByEmailOrPhoneNumber(String email, String phoneNumber);
+	List<TestRequest> findByPhoneNumber(String phoneNumber);
 
-  List<TestRequest> findByPhoneNumber(String phoneNumber);
+	void deleteById(Long id);
 
-  void deleteById(Long id);
 
-  List<TestRequest> findByName(String name);
 
-  List<TestRequest> findByStatus(RequestStatus status);
+
+	
+	List<TestRequest> findByName(String name);
+
+	List<TestRequest> findByStatus(RequestStatus status);
+	
+
 }

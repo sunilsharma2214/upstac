@@ -13,16 +13,29 @@ import java.time.LocalDate;
 @Entity
 public class TestRequestFlow {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Long id;
 
-  @ManyToOne @JsonIgnore private TestRequest request;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-  private RequestStatus fromStatus;
-  private RequestStatus toStatus;
 
-  @ManyToOne private User changedBy;
 
-  private LocalDate happenedOn = LocalDate.now();
+    @ManyToOne
+    @JsonIgnore
+    private TestRequest request;
+
+    private RequestStatus fromStatus ;
+    private RequestStatus toStatus ;
+
+    @ManyToOne
+    private User changedBy;
+
+    private LocalDate happenedOn=LocalDate.now();
+
+
+
+
+
+
+
 }

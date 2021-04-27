@@ -9,19 +9,17 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
-  User findByUserName(String username);
+    User findByUserName(String username);
+    Optional<User> findByEmail(String email);
+    Optional<User> findByPhoneNumber(String email);
+    void deleteByUserName(String username);
 
-  Optional<User> findByEmail(String email);
+    List<User> findAll();
+    List<User> findByStatus(AccountStatus status);
 
-  Optional<User> findByPhoneNumber(String email);
+    void deleteById(Long id);
 
-  void deleteByUserName(String username);
+    Optional<User> findById(Long id);
 
-  List<User> findAll();
 
-  List<User> findByStatus(AccountStatus status);
-
-  void deleteById(Long id);
-
-  Optional<User> findById(Long id);
 }

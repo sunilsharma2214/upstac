@@ -10,9 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.upgrad.upstac.auth.models.LoginRequest;
 import org.upgrad.upstac.auth.models.LoginResponse;
@@ -20,52 +18,67 @@ import org.upgrad.upstac.config.security.TokenProvider;
 import org.upgrad.upstac.exception.AppException;
 import org.upgrad.upstac.users.UserService;
 
+import static org.upgrad.upstac.exception.UpgradResponseStatusException.asBadRequest;
+
 @RestController
 public class AuthController {
 
-  private static final Logger log = LoggerFactory.getLogger(AuthController.class);
-  private AuthenticationManager authenticationManager;
-  private TokenProvider tokenProvider;
-  private UserService userService;
 
-  @Autowired
-  public AuthController(
-      AuthenticationManager authenticationManager,
-      TokenProvider tokenProvider,
-      UserService userService) {
-    this.authenticationManager = authenticationManager;
-    this.tokenProvider = tokenProvider;
-    this.userService = userService;
-  }
+    private AuthenticationManager authenticationManager;
 
-  @PostMapping("/auth/login")
-  public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest)
-      throws AuthenticationException {
+    private TokenProvider tokenProvider;
 
-    try {
+    private UserService userService;
 
-      final Authentication authentication =
-          authenticationManager.authenticate(
-              new UsernamePasswordAuthenticationToken(
-                  loginRequest.getUserName(), loginRequest.getPassword()));
 
-      if (userService.isApprovedUser(loginRequest.getUserName()) == false) {
-        throw new AppException("User Not Approved");
-      }
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-      SecurityContextHolder.getContext().setAuthentication(authentication);
-      final String token = tokenProvider.generateToken(authentication);
-      LoginResponse result = new LoginResponse(loginRequest.getUserName(), "Success", token);
 
-      return ResponseEntity.ok(result);
-
-    } catch (AppException e) {
-
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
-    } catch (AuthenticationException e) {
-      e.printStackTrace();
-      log.info("AuthenticationException" + e.getMessage());
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bad credentials", e);
+    @Autowired
+    public AuthController(AuthenticationManager authenticationManager, TokenProvider tokenProvider, UserService userService) {
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
+        this.userService = userService;
     }
-  }
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws AuthenticationException {
+
+        try {
+
+            final Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUserName(),
+                            loginRequest.getPassword()
+                    )
+            );
+
+
+            if(userService.isApprovedUser( loginRequest.getUserName()) == false){
+                throw new AppException("User Not Approved");
+            }
+
+
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            final String token = tokenProvider.generateToken(authentication);
+            LoginResponse result = new LoginResponse(loginRequest.getUserName(), "Success", token);
+
+            return ResponseEntity.ok(result);
+
+
+        } catch (AppException e) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, e.getMessage(), e);
+        }catch (AuthenticationException e) {
+            e.printStackTrace();
+            log.info("AuthenticationException" + e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Bad credentials", e);
+        }
+
+    }
+
+
 }

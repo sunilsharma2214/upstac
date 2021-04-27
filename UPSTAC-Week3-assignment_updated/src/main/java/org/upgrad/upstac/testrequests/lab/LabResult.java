@@ -13,22 +13,26 @@ import java.time.LocalDate;
 @Entity
 public class LabResult {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Long resultId;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JsonIgnore
-  @ToString.Exclude
-  private TestRequest request;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long resultId;
 
-  private String bloodPressure;
-  private String heartBeat;
-  private String temperature;
-  private String oxygenLevel;
-  private String comments;
-  private TestStatus result;
-  private LocalDate updatedOn;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
+    private TestRequest request;
 
-  @ManyToOne private User tester;
+    private String bloodPressure;
+    private String heartBeat;
+    private String temperature;
+    private String oxygenLevel;
+    private String comments;
+    private TestStatus result;
+    private LocalDate updatedOn;
+
+    @ManyToOne
+    private User tester;
+
+
 }

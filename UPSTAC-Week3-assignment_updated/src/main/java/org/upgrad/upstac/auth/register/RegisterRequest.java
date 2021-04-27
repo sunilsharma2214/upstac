@@ -1,5 +1,6 @@
 package org.upgrad.upstac.auth.register;
 
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,22 +13,29 @@ import org.upgrad.upstac.users.models.Gender;
 @EqualsAndHashCode
 public class RegisterRequest {
 
-  private String userName;
 
-  private String password;
-  private String firstName;
+    private String userName;
 
-  private String email = "";
+    private String password;
+    private String firstName;
 
-  private String phoneNumber = "";
+    private String email="";
 
-  private String lastName;
+    private String phoneNumber="";
 
-  private String address;
 
-  private Integer pinCode;
+    private String lastName;
 
-  private String dateOfBirth;
+    private String address;
 
-  private Gender gender;
+    private Integer pinCode;
+
+
+    private String dateOfBirth;
+
+
+    private Gender gender;
+
+
+
 }

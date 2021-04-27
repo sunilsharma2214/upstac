@@ -13,15 +13,32 @@ import java.time.LocalDate;
 @Entity
 public class Consultation {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Long id;
-  @ManyToOne User doctor;
-  @OneToOne(fetch = FetchType.LAZY)
-  @JsonIgnore
-  @ToString.Exclude
-  private TestRequest request;
-  private DoctorSuggestion suggestion;
-  private String comments;
-  private LocalDate updatedOn;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
+    private TestRequest request;
+
+    private DoctorSuggestion suggestion;
+
+
+    private String comments;
+
+    private LocalDate updatedOn;
+
+    @ManyToOne
+    User doctor;
+
+
+
+
+
+
+
+
+
 }

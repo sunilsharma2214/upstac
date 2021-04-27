@@ -3,8 +3,10 @@ package org.upgrad.upstac.testrequests.lab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.upgrad.upstac.config.security.UserLoggedInService;
 import org.upgrad.upstac.exception.AppException;
 import org.upgrad.upstac.testrequests.RequestStatus;
@@ -44,18 +46,20 @@ public class LabRequestController {
   @GetMapping
   @PreAuthorize("hasAnyRole('TESTER')")
   public List<TestRequest> getForTester() {
+    // Logged-in User
+    User doctor = userLoggedInService.getLoggedInUser();
 
-    User tester = userLoggedInService.getLoggedInUser();
-
-    return testRequestUpdateService.findByTester(tester);
+    // List of test assigned to user(doctor)
+    return testRequestQueryService.findByDoctor(doctor);
   }
 
   @PreAuthorize("hasAnyRole('TESTER')")
   @PutMapping("/assign/{id}")
   public TestRequest assignForLabTest(@PathVariable Long id) {
-
+    // Logged-in User
     User tester = userLoggedInService.getLoggedInUser();
 
+    // Assigned test request to logged-in user(doctor)
     return testRequestUpdateService.assignForLabTest(id, tester);
   }
 

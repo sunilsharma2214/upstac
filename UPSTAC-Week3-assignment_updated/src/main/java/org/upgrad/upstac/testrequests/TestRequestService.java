@@ -13,49 +13,56 @@ import java.util.List;
 @Service
 public class TestRequestService {
 
-  private static Logger logger = LoggerFactory.getLogger(TestRequestService.class);
-  @Autowired private TestRequestRepository testRequestRepository;
+    @Autowired
+    private TestRequestRepository testRequestRepository;
 
-  public TestRequest createTestRequestFrom(User user, CreateTestRequest createTestRequest) {
 
-    validateExistingRequestsNotPresentWithSameDetails(createTestRequest);
 
-    TestRequest testRequest = new TestRequest();
+    private static Logger logger = LoggerFactory.getLogger(TestRequestService.class);
 
-    testRequest.setName(createTestRequest.getName());
-    testRequest.setCreated(LocalDate.now());
-    testRequest.setStatus(RequestStatus.INITIATED);
-    testRequest.setAge(createTestRequest.getAge());
-    testRequest.setEmail(createTestRequest.getEmail());
-    testRequest.setPhoneNumber(createTestRequest.getPhoneNumber());
-    testRequest.setPinCode(createTestRequest.getPinCode());
-    testRequest.setAddress(createTestRequest.getAddress());
-    testRequest.setGender(createTestRequest.getGender());
 
-    testRequest.setCreatedBy(user);
-    return testRequestRepository.save(testRequest);
-  }
 
-  public void validateExistingRequestsNotPresentWithSameDetails(
-      CreateTestRequest createTestRequest) {
-    List<TestRequest> testRequests =
-        testRequestRepository.findByEmailOrPhoneNumber(
-            createTestRequest.getEmail(), createTestRequest.getPhoneNumber());
+    public TestRequest createTestRequestFrom(User user,CreateTestRequest createTestRequest) {
 
-    for (TestRequest testRequest : testRequests) {
+        validateExistingRequestsNotPresentWithSameDetails(createTestRequest);
 
-      if (testRequest.getStatus().equals(RequestStatus.COMPLETED) == false)
-        throw new AppException("A Request with same PhoneNumber or Email is already in progress ");
+        TestRequest testRequest = new TestRequest();
+
+        testRequest.setName(createTestRequest.getName());
+        testRequest.setCreated(LocalDate.now());
+        testRequest.setStatus(RequestStatus.INITIATED);
+        testRequest.setAge(createTestRequest.getAge());
+        testRequest.setEmail(createTestRequest.getEmail());
+        testRequest.setPhoneNumber(createTestRequest.getPhoneNumber());
+        testRequest.setPinCode(createTestRequest.getPinCode());
+        testRequest.setAddress(createTestRequest.getAddress());
+        testRequest.setGender(createTestRequest.getGender());
+
+        testRequest.setCreatedBy(user);
+        return testRequestRepository.save(testRequest);
     }
-  }
 
-  public List<TestRequest> findByStatus(RequestStatus requestStatus) {
+    public void validateExistingRequestsNotPresentWithSameDetails(CreateTestRequest createTestRequest) {
+        List<TestRequest> testRequests = testRequestRepository.findByEmailOrPhoneNumber(createTestRequest.getEmail(), createTestRequest.getPhoneNumber());
 
-    return testRequestRepository.findByStatus(requestStatus);
-  }
 
-  public List<TestRequest> getHistoryFor(User loggedInUser) {
+        for (TestRequest testRequest : testRequests) {
 
-    return testRequestRepository.findByCreatedBy(loggedInUser);
-  }
+            if (testRequest.getStatus().equals(RequestStatus.COMPLETED) == false)
+                throw new AppException("A Request with same PhoneNumber or Email is already in progress ");
+        }
+
+    }
+
+    public List<TestRequest> findByStatus(RequestStatus requestStatus){
+
+        return testRequestRepository.findByStatus(requestStatus);
+    }
+
+    public List<TestRequest> getHistoryFor(User loggedInUser){
+
+        return testRequestRepository.findByCreatedBy(loggedInUser);
+    }
+
+
 }
