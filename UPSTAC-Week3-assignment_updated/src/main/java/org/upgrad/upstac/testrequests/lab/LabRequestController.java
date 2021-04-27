@@ -39,7 +39,6 @@ public class LabRequestController {
   @GetMapping("/to-be-tested")
   @PreAuthorize("hasAnyRole('TESTER')")
   public List<TestRequest> getForTests() {
-
     return testRequestQueryService.findBy(RequestStatus.INITIATED);
   }
 
@@ -47,10 +46,10 @@ public class LabRequestController {
   @PreAuthorize("hasAnyRole('TESTER')")
   public List<TestRequest> getForTester() {
     // Logged-in User
-    User doctor = userLoggedInService.getLoggedInUser();
+    User tester = userLoggedInService.getLoggedInUser();
 
     // List of test assigned to user(doctor)
-    return testRequestQueryService.findByDoctor(doctor);
+    return testRequestQueryService.findByTester(tester);
   }
 
   @PreAuthorize("hasAnyRole('TESTER')")
@@ -67,9 +66,7 @@ public class LabRequestController {
   @PutMapping("/update/{id}")
   public TestRequest updateLabTest(
       @PathVariable Long id, @RequestBody CreateLabResult createLabResult) {
-
     try {
-
       User tester = userLoggedInService.getLoggedInUser();
       return testRequestUpdateService.updateLabTest(id, createLabResult, tester);
 

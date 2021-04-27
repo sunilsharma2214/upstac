@@ -40,7 +40,7 @@ public class ConsultationController {
   @PreAuthorize("hasAnyRole('DOCTOR')")
   public List<TestRequest> getForConsultations() {
     // Find the list of test request with status 'LAB_TEST_COMPLETED'
-    return testRequestQueryService.findBy(RequestStatus.INITIATED);
+    return testRequestQueryService.findBy(RequestStatus.LAB_TEST_COMPLETED);
   }
 
   @GetMapping
